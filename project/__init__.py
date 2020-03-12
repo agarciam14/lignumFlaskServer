@@ -14,10 +14,10 @@ app.config['MONGO_URI'] = 'mongodb://lignum-devteam:Eafit2020@ds030817.mlab.com:
 mongo = PyMongo(app)
 
 # Definiciones de rutas de los blueprints
-
+from project.geolocalizado.geolocalizado import geolocalizador_app
 
 # Instancias del Blueprint
-
+app.register_blueprint(geolocalizador_app)
 
 
 @app.route('/')
