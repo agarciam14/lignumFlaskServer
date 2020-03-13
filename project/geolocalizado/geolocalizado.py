@@ -15,11 +15,11 @@ def test_get():
         user = request.args['user']
         edad = request.args['edad']
         print(user)
-        return jsonify({message: 'pase'})
-    except Exception as excepciond:
+        return jsonify({'message': 'pase'})
+    except Exception as exception:
         print("No se logro hacer metodo get")
         print(exception)
-        return jsonify({message: 'no pase'})
+        return jsonify({'message': 'no pase'})
 
     
 @geolocalizador_app.route('/api/geolocalizado/test_post')
