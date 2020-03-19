@@ -15,10 +15,11 @@ mongo = PyMongo(app)
 
 # Definiciones de rutas de los blueprints
 from project.geolocalizado.geolocalizado import geolocalizador_app
+from project.crud_administrador.crud_administrador import crud_administrador_app
 
 # Instancias del Blueprint
 app.register_blueprint(geolocalizador_app)
-
+app.register_blueprint(crud_administrador_app)
 
 @app.route('/')
 def index():
