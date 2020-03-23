@@ -3,6 +3,9 @@ from flask import request
 from flask import Blueprint
 import json
 
+from project.validaciones_usuario.validaciones_usuario import validar_documento, validar_usuario, validar_correo
+from project.seguridad.seguridad import contrasena_md5
+from project.seguridad.seguridad_contrasena import validacion_contrasena_segura
 from project import mongo
 
 crud_administrador_app = Blueprint("crud_administrador_app", __name__)
@@ -13,7 +16,7 @@ def crear_usuario():
 
     mensaje = {"tipo": "", "mensaje": ""}
 
-    if validar_cedula(usuario['cedula']):
+    if validar_documento(usuario['documento']):
         if validar_correo(usuario['correo']):
             if validar_usuario(usuario['usuario']):
                 if validacion_contrasena_segura(usuario['contrasena']): 
@@ -66,6 +69,7 @@ def guardar_usuario(usuario):
         'tareas_realizadas': []
     }
     mongo.db.usuarios.insert_one(usuario_a_guardar)
+
 
 @crud_administrador_app.route('/api/crud_administrador/test_traer_usuarios', methods=['GET'])
 def test_traer_usuarios():

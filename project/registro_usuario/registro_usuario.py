@@ -3,19 +3,20 @@ from flask import request
 from flask import Blueprint
 import json
 
-from project.validaciones_usuario.validaciones_usuario import validar_cedula, validar_usuario, validar_correo
-from project.seguridad.seguridad import validacion_contrasena_segura, contrasena_md5
+from project.validaciones_usuario.validaciones_usuario import validar_documento, validar_usuario, validar_correo
+from project.seguridad.seguridad import contrasena_md5
+from project.seguridad.seguridad_contrasena import validacion_contrasena_segura
 from project import mongo
 
-regitro_usuario_app = Blueprint("regitro_usuario_app", __name__)
+registro_usuario_app = Blueprint("registro_usuario_app", __name__)
 
-@regitro_usuario_app.route('/api/registro_usuario', methods=['POST'])
+@registro_usuario_app.route('/api/registro_usuario', methods=['POST'])
 def registro_usuario():
     usuario = request.json['usuario']
 
     mensaje = {"tipo": "", "mensaje": ""}
 
-    if validar_cedula(usuario['cedula']) and validar_correo(usuario['correo']):
+    if validar_documento(usuario['documento']) and validar_correo(usuario['correo']):
         if validar_usuario(usuario['usuario']):
             if validacion_contrasena_segura(usuario['contrasena']): 
                 try:
@@ -43,6 +44,7 @@ def registro_usuario():
         mensaje["tipo"] = "error_correo_documento"
         mensaje["mensaje"] = "El usuario ya esta registrado"
         return jsonify(mensaje)
+
 
 def guardar_usuario(usuario):
     contrasena_hash = contrasena_md5(usuario['contrasena'])
