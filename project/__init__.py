@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Flask
+from flask import Flask, render_template
 from flask_pymongo import PyMongo
 from flask_cors import CORS
 import os
@@ -16,11 +16,19 @@ mongo = PyMongo(app)
 # Definiciones de rutas de los blueprints
 from project.geolocalizado.geolocalizado import geolocalizador_app
 from project.crud_administrador.crud_administrador import crud_administrador_app
+from project.login.login import login_app
 
 # Instancias del Blueprint
 app.register_blueprint(geolocalizador_app)
 app.register_blueprint(crud_administrador_app)
+app.register_blueprint(login_app)
 
-@app.route('/')
+
+@app.route('/api')
 def index():
     return 'Server on'
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def angular(path):
+    return render_template('index.html')
