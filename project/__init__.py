@@ -17,12 +17,13 @@ mongo = PyMongo(app)
 from project.geolocalizado.geolocalizado import geolocalizador_app
 from project.crud_administrador.crud_administrador import crud_administrador_app
 from project.login.login import login_app
+from project.registro_usuario.registro_usuario import registro_usuario_app
 
 # Instancias del Blueprint
 app.register_blueprint(geolocalizador_app)
 app.register_blueprint(crud_administrador_app)
 app.register_blueprint(login_app)
-
+app.register_blueprint(registro_usuario_app)
 
 @app.route('/api')
 def index():
