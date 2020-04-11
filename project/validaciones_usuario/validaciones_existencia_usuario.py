@@ -1,9 +1,9 @@
 from project import mongo
 
-def validar_documento(documento):
-    try: 
+def validar_existencia_documento(documento):
+    try:
         usuario = list(mongo.db.usuarios.find({'documento': documento}))
-        if len(usuario[0]) == 0:
+        if len(usuario) == 0:
             return True
         else:
             return False
@@ -14,10 +14,10 @@ def validar_documento(documento):
         return False
 
 
-def validar_usuario(usuario):
+def validar_existencia_usuario(usuario):
     try: 
         usuario_db = list(mongo.db.usuarios.find({'usuario': usuario}))
-        if len(usuario_db[0]) == 0:
+        if len(usuario_db) == 0:
             return True
         else:
             return False
@@ -28,10 +28,10 @@ def validar_usuario(usuario):
         return False
 
     
-def validar_correo(correo):
+def validar_existencia_correo(correo):
     try: 
         usuario = list(mongo.db.usuarios.find({'correo': correo}))
-        if len(usuario[0]) == 0:
+        if len(usuario) == 0:
             return True
         else:
             return False

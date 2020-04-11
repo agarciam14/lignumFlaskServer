@@ -3,7 +3,7 @@ from flask import request
 from flask import Blueprint
 import json
 
-from project.validaciones_usuario.validaciones_usuario import validar_documento, validar_usuario, validar_correo
+from project.validaciones_usuario.validaciones_existencia_usuario import validar_existencia_documento, validar_existencia_usuario, validar_existencia_correo
 from project.seguridad.seguridad import contrasena_md5
 from project.seguridad.seguridad_contrasena import validacion_contrasena_segura
 from project import mongo
@@ -16,13 +16,13 @@ def crear_usuario():
 
     mensaje = {"tipo": "", "mensaje": ""}
 
-    if validar_documento(usuario['documento']):
-        if validar_correo(usuario['correo']):
-            if validar_usuario(usuario['usuario']):
-                if validacion_contrasena_segura(usuario['contrasena']): 
+    if validar_existencia_documento(usuario['documento']):
+        if validar_existencia_correo(usuario['correo']):
+            if validar_existencia_usuario(usuario['nombre_usuario']):
+                if validacion_contrasena_segura(usuario['nombre_usuario'], usuario['contrasena']): 
                     try:
 
-                        guardar_usuario(usuario)
+                        guardar_usuario_nuevo(usuario)
 
                         mensaje["tipo"] = "aprobado"
                         mensaje["mensaje"] = "Usuario creado con exito"
@@ -50,7 +50,7 @@ def crear_usuario():
         mensaje["mensaje"] = "Documento ya registrado"
         return jsonify(mensaje)
 
-def guardar_usuario(usuario):
+def guardar_usuario_nuevo(usuario):
     contrasena_hash = contrasena_md5(usuario['contrasena'])
     usuario_a_guardar = {
         '_id': usuario['documento'],
@@ -58,6 +58,7 @@ def guardar_usuario(usuario):
         'documento': usuario['documento'],
         'correo': usuario['correo'],
         'contrasena': contrasena_hash,
+        'imagen': usuario['imagen'],
         'tipo': usuario['tipo'],
         'puntos': 0,
         'arboles': [],
@@ -71,13 +72,100 @@ def guardar_usuario(usuario):
     mongo.db.usuarios.insert_one(usuario_a_guardar)
 
 
-@crud_administrador_app.route('/api/crud_administrador/test_traer_usuarios', methods=['GET'])
-def test_traer_usuarios():
-    try:
-        usuarios = list(mongo.db.usuarios.find({}))
-        usuarios_a_retornar = {
-            'usuarios': usuarios
-        }
-        return jsonify(usuarios_a_retornar)
-    except Exception as exception:
-        return jsonify(False)
+@crud_administrador_app.route('/api/crud_administrador/modificar_usuario', methods=['POST'])
+def modificar_usuario():
+    usuario = request.json['usuario']
+
+    mensaje = {"tipo": "", "mensaje": ""}
+
+    if validar_existencia_documento(usuario['documento']) == False:
+        if validar_existencia_correo(usuario['correo']):
+            if validar_existencia_usuario(usuario['nombre_usuario']):
+                try:
+
+                    mongo.db.usuarios.update({'_id': documento}, {'$set': {'nombre_usuario': usuario['nombre_usuario'], 'correo': usuario['correo'], 'imagen': usuario['imagen']}})
+
+                    mensaje["tipo"] = "aprobado"
+                    mensaje["mensaje"] = "Usuario modificado con exito"
+                    return jsonify(mensaje)
+                except Exception as exception:
+                    print("======MOD_USUA=====")
+                    print(exception)
+                    mensaje["tipo"] = "error_interno"
+                    mensaje["mensaje"] = "Error en la conexion con la base de datos"
+                    return jsonify(mensaje)
+            else:
+                mensaje["tipo"] = "error_nombre_usuario"
+                mensaje["mensaje"] = "Nombre de usuario ya existe"
+                return jsonify(mensaje)
+        else:
+            mensaje["tipo"] = "error_correo"
+            mensaje["mensaje"] = "Correo ya registrado"
+            return jsonify(mensaje)
+    else:
+        mensaje["tipo"] = "error_documento"
+        mensaje["mensaje"] = "El usuario no se encuentra registrado"
+        return jsonify(mensaje)
+
+
+@crud_administrador_app.route('/api/crud_administrador/modificar_contrasena', methods=['POST'])
+def cambiar_contrasena():
+    documento = request.json['documento']
+    contrasena = request.json['contrasena']
+
+    mensaje = {"tipo": "", "mensaje": ""}
+
+    if validar_existencia_documento(nombre_usuario) == False:
+        if validacion_contrasena_segura(nombre_usuario, contrasena): 
+            try:
+
+                contrasena_hash = contrasena_md5(contrasena)
+
+                mongo.db.usuarios.update({'_id': documento}, {'$set': {'contrasena': contrasena_hash}})
+
+                mensaje["tipo"] = "aprobado"
+                mensaje["mensaje"] = "Contrasena modificada con exito"
+                return jsonify(mensaje)
+            except Exception as exception:
+                print("======MOD_CONTRA=====")
+                print(exception)
+                mensaje["tipo"] = "error_interno"
+                mensaje["mensaje"] = "Error en la conexion con la base de datos"
+                return jsonify(mensaje)
+        else:
+            mensaje["tipo"] = "error_contrasena"
+            mensaje["mensaje"] = "La contrasena no cumple con las medidas de seguridad"
+            return jsonify(mensaje)
+    else:
+        mensaje["tipo"] = "error_documento"
+        mensaje["mensaje"] = "El usuario no se encuentra registrado"
+        return jsonify(mensaje)
+        
+
+@crud_administrador_app.route('/api/crud_administrador/eliminar_usuario', methods=['POST'])
+def eliminar_usuario():
+    usuario = request.json['usuario']
+
+    mensaje = {"tipo": "", "mensaje": ""}
+    # El se puede eliminar a el mismo?
+    # Que pasa si solo queda un usuario y se elimina?
+    if validar_existencia_documento(nombre_usuario) == False:
+        try:
+
+            mongo.db.usuarios.remove({'_id': documento})
+
+            mensaje["tipo"] = "aprobado"
+            mensaje["mensaje"] = "Usuario eliminado con exito"
+            return jsonify(mensaje)
+        except Exception as exception:
+            print("======ELI_USUA=====")
+            print(exception)
+            mensaje["tipo"] = "error_interno"
+            mensaje["mensaje"] = "Error en la conexion con la base de datos"
+            return jsonify(mensaje)
+
+    else:
+        mensaje["tipo"] = "error_documento"
+        mensaje["mensaje"] = "El usuaio no se encuentra registrado"
+        return jsonify(mensaje)
+    

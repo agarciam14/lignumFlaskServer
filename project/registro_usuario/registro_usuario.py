@@ -3,7 +3,7 @@ from flask import request
 from flask import Blueprint
 import json
 
-from project.validaciones_usuario.validaciones_usuario import validar_documento, validar_usuario, validar_correo
+from project.validaciones_usuario.validaciones_existencia_usuario import validar_existencia_documento, validar_existencia_usuario, validar_existencia_correo
 from project.seguridad.seguridad import contrasena_md5
 from project.seguridad.seguridad_contrasena import validacion_contrasena_segura
 from project import mongo
@@ -15,10 +15,9 @@ def registro_usuario():
     usuario = request.json['usuario']
 
     mensaje = {"tipo": "", "mensaje": ""}
-
-    if validar_documento(usuario['documento']) and validar_correo(usuario['correo']):
-        if validar_usuario(usuario['usuario']):
-            if validacion_contrasena_segura(usuario['contrasena']): 
+    if validar_existencia_documento(usuario['documento']) and validar_existencia_correo(usuario['correo']):
+        if validar_existencia_usuario(usuario['nombre_usuario']):
+            if validacion_contrasena_segura(usuario['nombre_usuario'], usuario['contrasena']): 
                 try:
 
                     guardar_usuario(usuario)
@@ -54,7 +53,8 @@ def guardar_usuario(usuario):
         'documento': usuario['documento'],
         'correo': usuario['correo'],
         'contrasena': contrasena_hash,
-        'tipo': 'comun',
+        'imagen': usuario['imagen'],
+        'tipo': 'usuario_comun',
         'puntos': 0,
         'arboles': [],
         'km_recorridos': 0,
