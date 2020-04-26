@@ -17,7 +17,7 @@ def login():
 
     try:
         usuario_interno = list(mongo.db.usuarios.find({'usuario': usuario}))
-        if usuario_interno[0].len() == 0:
+        if len(usuario_interno[0]) == 0:
             mensaje["tipo"] = "credenciales_erroneas"
             mensaje["mensaje"] = "Credenciales erroneas"
             return jsonify(mensaje)
