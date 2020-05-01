@@ -11,21 +11,24 @@ login_app = Blueprint("login_app", __name__)
 @login_app.route('/api/login', methods=['POST'])
 def login():
     usuario = request.json['usuario']
-    contrasena = request.json['contrasena']
+
+    nombre_usuario = usuario['usuario']
+    contrasena = usuario['contrasena']
 
     mensaje = {"tipo": "", "mensaje": ""}
 
     try:
-        usuario_interno = list(mongo.db.usuarios.find({'usuario': usuario}))
-        if len(usuario_interno[0]) == 0:
+        usuario_interno = list(mongo.db.usuarios.find({'nombre_usuario': nombre_usuario}))
+        if len(usuario_interno) == 0:
             mensaje["tipo"] = "credenciales_erroneas"
             mensaje["mensaje"] = "Credenciales erroneas"
             return jsonify(mensaje)
         else:
             contrasena_md5hash = hashlib.md5(contrasena.encode())
-            if contrasena_md5hash == usuario_interno[0]['contrasena']:
-                mensaje["tipo"] = usuario_interno[0]['tipo']
-                mensaje["mensaje"] = "Aprobado"
+
+            if contrasena_md5hash.hexdigest() == usuario_interno[0]['contrasena']:
+                mensaje["tipo"] = "aprobado"
+                mensaje["mensaje"] = usuario_interno[0]['tipo']
                 return jsonify(mensaje)
             else:
                 mensaje["tipo"] = "credenciales_erroneas"

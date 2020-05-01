@@ -11,11 +11,16 @@ utilidades_administrador_app = Blueprint("utilidades_administrador_app", __name_
 @utilidades_administrador_app.route('/api/crud_administrador/traer_usuarios', methods=['GET'])
 def traer_usuarios():
     try:
+        mensaje = {"tipo": "", "mensaje": ""}
+
         usuarios = list(mongo.db.usuarios.find({}))
 
         usuarios_a_retornar = retirar_info_usuarios(usuarios)
+        
+        mensaje["tipo"] = 'aprobado'
+        mensaje["mensaje"] = usuarios_a_retornar
 
-        return jsonify(usuarios_a_retornar)
+        return jsonify(mensaje)
     except Exception as exception:
         print("======USUARIOS=====")
         print(exception)
@@ -24,15 +29,17 @@ def traer_usuarios():
         return jsonify(mensaje)
 
 def retirar_info_usuarios(usuarios):
-    usuario = {
-        'nombre_usuario' : '',
-        'documento': ''
-    }
     usuarios_a_retornar = []
     for usu in usuarios:
+        usuario = {
+            'nombre_usuario' : '',
+            'documento': '',
+            'imagen': ''
+        }
         usuario['nombre_usuario'] = usu['nombre_usuario']
         usuario['documento'] = usu['documento']
-        
+        usuario['imagen'] = usu['imagen']
+
         usuarios_a_retornar.append(usuario)
     return usuarios_a_retornar
 
