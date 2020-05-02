@@ -4,6 +4,7 @@ from flask import Blueprint
 import json
 
 from project import mongo
+from project.validaciones_usuario.validaciones_existencia_usuario import validar_existencia_documento
 
 utilidades_administrador_app = Blueprint("utilidades_administrador_app", __name__)
 
@@ -46,18 +47,16 @@ def retirar_info_usuarios(usuarios):
 
 @utilidades_administrador_app.route('/api/crud_administrador/traer_datos_usuario', methods=['GET'])
 def traer_datos_usuario():
-    usuario = request.json['usuario']
+    documento = request.args['documento']
 
     mensaje = {"tipo": "", "mensaje": ""}
-    if validar_existencia_documento(nombre_usuario) == False:
+    if validar_existencia_documento(documento) == False:
         try:
+            datos_usuario = list(mongo.db.usuarios.find({'documento': documento}))[0]
+            datos_usuario_limpio = retirar_datos_usuario(datos_usuario)
 
-            datos_usuario = mongo.db.usuarios.find({'_id': usuario['documento']})
-
-            datos_usuario['contrasena'] = ''
-
-            mensaje["tipo"] = "usuario"
-            mensaje["mensaje"] = datos_usuario
+            mensaje["tipo"] = "aprobado"
+            mensaje["mensaje"] = datos_usuario_limpio
             return jsonify(mensaje)
         except Exception as exception:
             print("======DATOS_USUA=====")
@@ -70,3 +69,12 @@ def traer_datos_usuario():
         mensaje["tipo"] = "error_documento"
         mensaje["mensaje"] = "El usuaio no se encuentra registrado"
         return jsonify(mensaje)
+
+def retirar_datos_usuario(datos_usuario):
+    usuario = {
+        'nombre_usuario': datos_usuario['nombre_usuario'],
+        'documento': datos_usuario['documento'],
+        'correo': datos_usuario['correo'],
+        'tipo': datos_usuario['tipo']
+    }
+    return usuario
