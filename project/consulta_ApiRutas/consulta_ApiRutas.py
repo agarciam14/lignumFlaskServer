@@ -14,7 +14,6 @@ def obtener_ruta():
         content = file_geo.read()
         json_file = json.loads(content)
         rutas_a_retornar = {"mensaje" : definicion_rutas(json_file)}
-        print(rutas_a_retornar)
         return jsonify(rutas_a_retornar)
     except Exception as exception:
         print("======RUTAS=====")
