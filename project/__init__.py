@@ -13,12 +13,14 @@ CORS(app, resources= { r"/*": {"origins": "*"} })
 app.config['MONGO_URI'] = 'mongodb://lignum-devteam:Eafit2020@ds030817.mlab.com:30817/lignum-project'
 mongo = PyMongo(app)
 
+
 # Definiciones de rutas de los blueprints
 from project.geolocalizado.geolocalizado import geolocalizador_app
 from project.crud_administrador.crud_administrador import crud_administrador_app
 from project.crud_administrador.utilidades_administrador import utilidades_administrador_app
 from project.login.login import login_app
 from project.registro_usuario.registro_usuario import registro_usuario_app
+from project.consulta_ApiRutas.consulta_ApiRutas import consulta_ApiRutas_app 
 
 # Instancias del Blueprint
 app.register_blueprint(geolocalizador_app)
@@ -26,6 +28,7 @@ app.register_blueprint(crud_administrador_app)
 app.register_blueprint(utilidades_administrador_app)
 app.register_blueprint(login_app)
 app.register_blueprint(registro_usuario_app)
+app.register_blueprint(consulta_ApiRutas_app)
 
 @app.route('/api')
 def index():
