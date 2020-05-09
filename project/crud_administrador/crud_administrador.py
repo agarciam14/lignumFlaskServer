@@ -3,7 +3,7 @@ from flask import request
 from flask import Blueprint
 import json
 
-from project.validaciones_usuario.validaciones_existencia_usuario import validar_existencia_documento, validar_existencia_usuario, validar_existencia_correo
+from project.validaciones_usuario.validaciones_existencia_usuario import *
 from project.seguridad.seguridad import contrasena_md5
 from project.seguridad.seguridad_contrasena import validacion_contrasena_segura
 from project import mongo
@@ -77,13 +77,13 @@ def modificar_usuario():
     usuario = request.json['usuario']
 
     mensaje = {"tipo": "", "mensaje": ""}
-
+    print(usuario)
     if validar_existencia_documento(usuario['documento']) == False:
-        if validar_existencia_correo(usuario['correo']):
-            if validar_existencia_usuario(usuario['nombre_usuario']):
+        if validar_existencia_correo_modificar(usuario['documento'], usuario['correo']):
+            if validar_existencia_usuario_modificar(usuario['documento'], usuario['nombre_usuario']):
                 try:
 
-                    mongo.db.usuarios.update({'_id': documento}, {'$set': {'nombre_usuario': usuario['nombre_usuario'], 'correo': usuario['correo'], 'imagen': usuario['imagen']}})
+                    mongo.db.usuarios.update({'_id': usuario['documento']}, {'$set': {'nombre_usuario': usuario['nombre_usuario'], 'correo': usuario['correo'], 'imagen': usuario['imagen']}})
 
                     mensaje["tipo"] = "aprobado"
                     mensaje["mensaje"] = "Usuario modificado con exito"
