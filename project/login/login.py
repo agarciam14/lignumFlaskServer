@@ -27,9 +27,14 @@ def login():
             contrasena_md5hash = hashlib.md5(contrasena.encode())
 
             if contrasena_md5hash.hexdigest() == usuario_interno[0]['contrasena']:
-                mensaje["tipo"] = "aprobado"
-                mensaje["mensaje"] = usuario_interno[0]['tipo']
-                return jsonify(mensaje)
+                mensaje_entrada = {
+                    'tipo': 'aprobado',
+                    'mensaje': {
+                        'tipo': usuario_interno[0]['tipo'],
+                        'documento': usuario_interno[0]['documento']
+                    }
+                }
+                return jsonify(mensaje_entrada)
             else:
                 mensaje["tipo"] = "credenciales_erroneas"
                 mensaje["mensaje"] = "Credenciales erroneas"

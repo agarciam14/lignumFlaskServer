@@ -75,6 +75,7 @@ def retirar_datos_usuario(datos_usuario):
         'nombre_usuario': datos_usuario['nombre_usuario'],
         'documento': datos_usuario['documento'],
         'correo': datos_usuario['correo'],
-        'tipo': datos_usuario['tipo']
+        'tipo': datos_usuario['tipo'],
+        'imagen': datos_usuario['imagen']
     }
     return usuario

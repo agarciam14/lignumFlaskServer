@@ -111,11 +111,12 @@ def modificar_usuario():
 @crud_administrador_app.route('/api/crud_administrador/modificar_contrasena', methods=['POST'])
 def cambiar_contrasena():
     documento = request.json['documento']
+    nombre_usuario = request.json['nombre_usuario']
     contrasena = request.json['contrasena']
 
     mensaje = {"tipo": "", "mensaje": ""}
 
-    if validar_existencia_documento(nombre_usuario) == False:
+    if validar_existencia_documento(documento) == False:
         if validacion_contrasena_segura(nombre_usuario, contrasena): 
             try:
 
@@ -149,10 +150,10 @@ def eliminar_usuario():
     mensaje = {"tipo": "", "mensaje": ""}
     # El se puede eliminar a el mismo?
     # Que pasa si solo queda un usuario y se elimina?
-    if validar_existencia_documento(nombre_usuario) == False:
+    if validar_existencia_documento(usuario['documento']) == False:
         try:
 
-            mongo.db.usuarios.remove({'_id': documento})
+            mongo.db.usuarios.remove({'_id': usuario['documento']})
 
             mensaje["tipo"] = "aprobado"
             mensaje["mensaje"] = "Usuario eliminado con exito"
