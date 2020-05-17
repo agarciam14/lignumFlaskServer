@@ -4,6 +4,7 @@ from flask import Blueprint
 import json
 
 from project.validaciones_usuario.validaciones_existencia_usuario import *
+from project.validaciones_ciclovia.validacion_existencia_ciclovia import *
 from project.seguridad.seguridad import contrasena_md5
 from project.seguridad.seguridad_contrasena import validacion_contrasena_segura
 from project import mongo
@@ -70,6 +71,39 @@ def guardar_usuario_nuevo(usuario):
         'tareas_realizadas': []
     }
     mongo.db.usuarios.insert_one(usuario_a_guardar)
+
+@crud_administrador_app.route('/api/crud_administrador/crea_ciclovia', methods=['POST'])
+def crea_ciclovia():
+    ciclovia = request.json['ciclovia']
+
+    mensaje = {"tipo": "", "mensaje": ""}
+    if validar_existencia_ciclovia(ciclovia['nombre']):
+        try:
+            guardar_ciclovia(ciclovia)
+            mensaje["tipo"] = "aprobado"
+            mensaje["mensaje"] = "Ciclovia aprobada"
+            return jsonify(mensaje)
+        except Exception as exception:
+            print("======REG_U_NUEVO=====")
+            print(exception)
+            mensaje["tipo"] = "error_interno"
+            mensaje["mensaje"] = "Error en la conexion con la base de datos"
+            return jsonify(mensaje)
+           
+def guardar_ciclovia(ciclovia):
+    ciclovia_a_guardar = {
+        'nombre_ciclovia' : ciclovia['nombre_ciclovia'],
+        'hora_inicio' : ciclovia['hora_inicio'],
+        'hora_fin' : ciclovia['hora_fin'],
+        'ruta'['inicio']['lat']: ciclovia['ruta'['inicio']['lat']] ,
+        'ruta'['inicio']['log']: ciclovia['ruta'['inicio']['log']],
+        'ruta'['fin']['lat']: ciclovia['ruta'['fin']['lat']],
+        'ruta'['fin']['log']: ciclovia['ruta'['fin']['log']], 
+        'dia' : ciclovia['dia'],
+    }
+    mongo.db.ciclovias.insert_one(ciclovia_a_guardar)
+
+    
 
 
 @crud_administrador_app.route('/api/crud_administrador/modificar_usuario', methods=['POST'])
