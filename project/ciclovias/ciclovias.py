@@ -3,6 +3,7 @@ from flask import request
 from flask import Blueprint
 import json
 import urllib.request as urllib
+from project import mongo
 
 ciclovias_app = Blueprint("ciclovias_app", __name__)
 
@@ -11,36 +12,42 @@ def traer_ciclovias():
     try:
         mensaje = {"tipo": "", "mensaje": ""}
 
-        usuarios = list(mongo.db.ciclovias.find({}))
+        ciclovias = list(mongo.db.ciclovias.find({}))
 
         ciclovias_a_retornar = retirar_info_ciclovias(ciclovias)
         
         mensaje["tipo"] = 'aprobado'
         mensaje["mensaje"] = ciclovias_a_retornar
+        print(mensaje["mensaje"])
 
         return jsonify(mensaje)
     except Exception as exception:
-        print("======USUARIOS=====")
+        print("======CICLO-VIA=====")
         print(exception)
         mensaje["tipo"] = "error_interno"
         mensaje["mensaje"] = "Error en la conexion con la base de datos"
         return jsonify(mensaje)
 
-def retirar_info_usuarios(ciclovias):
-    usuarios_a_ciclovias = []
+def retirar_info_ciclovias(ciclovias):
+    ciclovias_a_retornar = []
     for ciclo in ciclovias:
         ciclovia = {
             'nombre_ciclovia' : '',
-            'dia': '',
             'hora_inicio': '',
             'hora_fin': '',
-            'ruta': '',
+            'ruta': {
+                'inicio': {
+                    'lat': '',
+                    'log': ''
+                },
+                'fin': {
+                    'lat': '',
+                    'log': ''
+                }
+            },
+            'dia': '',
         }
-        ciclovia['nombre_ciclovia'] = ciclo['nombre_ciclovia']
-        ciclovia['dia'] = ciclo['dia']
-        ciclovia['hora_inicio'] = ciclo['hora_inicio']
-        ciclovia['hora_fin'] = ciclo['hora_fin']
-        ciclovia['ruta'] = ciclo['ruta']
-
+        ciclovia : ciclo
+        print(ciclovia)
         ciclovias_a_retornar.append(ciclovia)
     return ciclovias_a_retornar

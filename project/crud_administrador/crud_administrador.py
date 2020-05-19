@@ -77,30 +77,44 @@ def crea_ciclovia():
     ciclovia = request.json['ciclovia']
 
     mensaje = {"tipo": "", "mensaje": ""}
-    if validar_existencia_ciclovia(ciclovia['nombre']):
+    if validar_existencia_ciclovia(ciclovia['nombre_ciclovia']):
         try:
             guardar_ciclovia(ciclovia)
             mensaje["tipo"] = "aprobado"
             mensaje["mensaje"] = "Ciclovia aprobada"
             return jsonify(mensaje)
         except Exception as exception:
-            print("======REG_U_NUEVO=====")
+            print("======REG_VIA_NUEVO=====")
             print(exception)
             mensaje["tipo"] = "error_interno"
             mensaje["mensaje"] = "Error en la conexion con la base de datos"
             return jsonify(mensaje)
+    else:
+        mensaje["tipo"] = "error_Nombre"
+        mensaje["mensaje"] = "ciclovia ya registrada"
+        return jsonify(mensaje)
+            
+
+
            
 def guardar_ciclovia(ciclovia):
     ciclovia_a_guardar = {
-        'nombre_ciclovia' : ciclovia['nombre_ciclovia'],
+        '_id' : ciclovia['nombre_ciclovia'],
         'hora_inicio' : ciclovia['hora_inicio'],
         'hora_fin' : ciclovia['hora_fin'],
-        'ruta'['inicio']['lat']: ciclovia['ruta'['inicio']['lat']] ,
-        'ruta'['inicio']['log']: ciclovia['ruta'['inicio']['log']],
-        'ruta'['fin']['lat']: ciclovia['ruta'['fin']['lat']],
-        'ruta'['fin']['log']: ciclovia['ruta'['fin']['log']], 
-        'dia' : ciclovia['dia'],
+        'ruta' : {
+            'inicio' : {
+                'lat' : ciclovia['ruta']['inicio']['lat'],
+                'log' : ciclovia['ruta']['inicio']['log']
+            },
+            'fin' : {
+                'lat' : ciclovia['ruta']['fin']['lat'],
+                'log' : ciclovia['ruta']['fin']['log']
+            }
+        },
+        'dia' : ciclovia['dia']
     }
+    print(ciclovia_a_guardar)
     mongo.db.ciclovias.insert_one(ciclovia_a_guardar)
 
     

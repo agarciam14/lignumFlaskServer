@@ -4,7 +4,7 @@ def validar_existencia_ciclovia(nombre):
     try:
         ciclovia = list(mongo.db.ciclovia.find({'nombre_ciclovia': nombre}))
 
-        if len(usuario) == 0:
+        if len(ciclovia) == 0:
             return True
         else:
             return False
