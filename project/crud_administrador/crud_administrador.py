@@ -4,6 +4,7 @@ from flask import Blueprint
 import json
 
 from project.validaciones_usuario.validaciones_existencia_usuario import *
+from project.validaciones_meta.validaciones_existencia_meta import *
 from project.seguridad.seguridad import contrasena_md5
 from project.seguridad.seguridad_contrasena import validacion_contrasena_segura
 from project import mongo
@@ -169,4 +170,42 @@ def eliminar_usuario():
         mensaje["tipo"] = "error_documento"
         mensaje["mensaje"] = "El usuaio no se encuentra registrado"
         return jsonify(mensaje)
+
+
+@crud_administrador_app.route('/api/crud_administrador/crear_meta', methods=['POST'])
+def crear_meta():
+    meta = request.json['meta']
+
+    mensaje = {"tipo": "", "mensaje": ""}
+
+    if validar_existencia_meta(meta['nombre_meta']):
+        try:
+            guardar_meta_nueva(meta)
+
+            mensaje["tipo"] = "aprobado"
+            mensaje["mensaje"] = "Meta creada con exito"
+            return jsonify(mensaje)
+        except Exception as exception:
+            print("======REG_META_NUEVA=====")
+            print(exception)
+            mensaje["tipo"] = "error_interno"
+            mensaje["mensaje"] = "Error en la conexion con la base de datos"
+            return jsonify(mensaje)
+                
+    else:
+        mensaje["tipo"] = "error_nombre_meta"
+        mensaje["mensaje"] = "Meta ya registrada"
+        return jsonify(mensaje)
+
+def guardar_meta_nueva(meta):
+    meta_a_guardar = {
+        '_id' : meta['nombre_meta'],
+        'nombre_meta' : meta['nombre_meta'],
+        'objetivo' : meta['objetivo'],
+        'descripcion' : meta['descripcion'],
+        'puntaje' : meta['puntaje'],
+        'dependencias' : meta['dependencias']
+    }
+    mongo.db.metas.insert_one(meta_a_guardar)
+    print(datos_usuario)
     
