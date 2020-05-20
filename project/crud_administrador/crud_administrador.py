@@ -79,6 +79,7 @@ def crea_ciclovia():
     mensaje = {"tipo": "", "mensaje": ""}
     if validar_existencia_ciclovia(ciclovia['nombre_ciclovia']):
         try:
+            print(ciclovia)
             guardar_ciclovia(ciclovia)
             mensaje["tipo"] = "aprobado"
             mensaje["mensaje"] = "Ciclovia aprobada"
@@ -100,6 +101,7 @@ def crea_ciclovia():
 def guardar_ciclovia(ciclovia):
     ciclovia_a_guardar = {
         '_id' : ciclovia['nombre_ciclovia'],
+        'nombre_ciclovia': ciclovia['nombre_ciclovia'],
         'hora_inicio' : ciclovia['hora_inicio'],
         'hora_fin' : ciclovia['hora_fin'],
         'ruta' : {

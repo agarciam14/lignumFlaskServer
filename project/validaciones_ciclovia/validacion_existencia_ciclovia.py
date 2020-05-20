@@ -10,7 +10,7 @@ def validar_existencia_ciclovia(nombre):
             return False
     
     except Exception as exception:
-        print("======DOC_EXS======")
+        print("======CICLOVIA_EXS======")
         print(exception)
         return False
 
