@@ -207,5 +207,5 @@ def guardar_meta_nueva(meta):
         'dependencias' : meta['dependencias']
     }
     mongo.db.metas.insert_one(meta_a_guardar)
-    print(datos_usuario)
+    print(meta_a_guardar)
     
