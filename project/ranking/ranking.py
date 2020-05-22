@@ -5,20 +5,20 @@ import json
 import urllib.request as urllib
 from project import mongo
 
-ciclovias_app = Blueprint("ciclovias_app", __name__)
+ranking_app = Blueprint("ranking_app", __name__)
 
-@ciclovias_app.route('/api/ciclovias/traer_ciclovias', methods=['GET'])
-def traer_ciclovias():
+@ranking_app.route('/api/ranking/traer_ranking', methods=['GET'])
+def traer_ranking():
     try:
         mensaje = {"tipo": "", "mensaje": ""}
 
-        ciclovias = list(mongo.db.ciclovias.find({}))
+        ranking = list(mongo.db.usuarios.find({}).sort("puntos",-1))
         mensaje["tipo"] = 'aprobado'
-        mensaje["mensaje"] = ciclovias
+        mensaje["mensaje"] = ranking
 
         return jsonify(mensaje)
     except Exception as exception:
-        print("======CICLO-VIA=====")
+        print("======RANKING=====")
         print(exception)
         mensaje["tipo"] = "error_interno"
         mensaje["mensaje"] = "Error en la conexion con la base de datos"

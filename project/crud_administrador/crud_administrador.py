@@ -22,9 +22,7 @@ def crear_usuario():
             if validar_existencia_usuario(usuario['nombre_usuario']):
                 if validacion_contrasena_segura(usuario['nombre_usuario'], usuario['contrasena']): 
                     try:
-
                         guardar_usuario_nuevo(usuario)
-
                         mensaje["tipo"] = "aprobado"
                         mensaje["mensaje"] = "Usuario creado con exito"
                         return jsonify(mensaje)
@@ -79,7 +77,6 @@ def crea_ciclovia():
     mensaje = {"tipo": "", "mensaje": ""}
     if validar_existencia_ciclovia(ciclovia['nombre_ciclovia']):
         try:
-            print(ciclovia)
             guardar_ciclovia(ciclovia)
             mensaje["tipo"] = "aprobado"
             mensaje["mensaje"] = "Ciclovia aprobada"
