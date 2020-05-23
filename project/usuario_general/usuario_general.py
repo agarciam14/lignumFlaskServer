@@ -39,7 +39,9 @@ def retirar_datos_usuario(datos_usuario):
         'nombre_usuario': datos_usuario['nombre_usuario'],
         'documento': datos_usuario['documento'],
         'puntaje': datos_usuario['puntos'],
-        'recorrido': datos_usuario['km_recorridos']
+        'recorrido': datos_usuario['km_recorridos'],
+        'tareas_actuales': datos_usuario['tareas_actuales'],
+        'tareas_realizadas': datos_usuario['tareas_realizadas']
     }
     return usuario
 
@@ -47,7 +49,6 @@ def retirar_datos_usuario(datos_usuario):
 def modificar_recorrido():
     usuario = request.json['usuario']
     puntos = request.json['puntos']
-    print(usuario)
     mensaje = {"tipo": "", "mensaje": ""}
     if validar_existencia_documento(usuario['documento']) == False:
         try:
@@ -74,7 +75,6 @@ def modificar_recorrido():
         return jsonify(mensaje)
 
 def haversine(puntoA,puntoB):
-    print(puntoA)
     lat1 = puntoA['lat']
     lon1 = puntoA['long']
     lat2 = puntoB['lat']
@@ -89,3 +89,47 @@ def haversine(puntoA,puntoB):
     c = 2 * asin(sqrt(a)) 
     r = 6371 # Radius of earth in kilometers. Use 3956 for miles
     return c * r
+
+@usuario_general_app.route('/api/usuario_general/evaluar_metas', methods=['POST'])
+def evaluar_metas():
+    usuario = request.json['usuario']
+    mensaje = {"tipo": "", "mensaje": ""}
+    if validar_existencia_documento(usuario['documento']) == False:
+        try:
+            tareas_actuales = usuario['tareas_actuales']
+            tareas_realizadas = usuario['tareas_realizadas']
+            mensaje["tipo"] = "aprobado"
+            puntaje = usuario['puntaje']
+            for tarea in tareas_actuales:
+                tarea = list(mongo.db.metas.find({'nombre_meta': tarea}))[0]
+                if tarea['objetivo']<=usuario['recorrido']:
+                    mensaje["tipo"] = "exito"
+                    mensaje["mensaje"]+=tarea['nombre_meta']+': '+str(tarea['puntaje'])
+                    tareas_realizadas.append(tarea['nombre_meta'])
+                    puntaje+=tarea['puntaje']
+                    
+            tareas_nuevas = asignar_metas_siguientes(tareas_realizadas)
+
+            mongo.db.usuarios.update({'_id': usuario['documento']}, {'$set': {'tareas_realizadas': tareas_realizadas, 'tareas_actuales': tareas_nuevas, 'puntos': puntaje}})
+
+            return jsonify(mensaje)
+        except Exception as exception:
+            print("======EVAL_METAS=====")
+            print(exception)
+            mensaje["tipo"] = "error_interno"
+            mensaje["mensaje"] = "Error en la conexion con la base de datos"
+            return jsonify(mensaje)
+            
+    else:
+        mensaje["tipo"] = "error_documento"
+        mensaje["mensaje"] = "El usuario no se encuentra registrado"
+        return jsonify(mensaje)
+
+def asignar_metas_siguientes(tareas_realizadas):
+    metas = list(mongo.db.metas.find({}))
+    tareas_actuales = []
+    for meta in metas:
+        if meta['nombre_meta'] not in tareas_realizadas and len(meta['dependencias'])>0:
+            if meta['dependencias'][0] in tareas_realizadas:
+                tareas_actuales.append(meta['nombre_meta'])
+    return tareas_actuales
