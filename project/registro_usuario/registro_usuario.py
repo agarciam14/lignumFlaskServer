@@ -62,7 +62,7 @@ def guardar_usuario(usuario):
         'dias_uso_cr': 0,
         'tiempo_uso_cv': 0,
         'tiempo_uso_cr': 0,
-        'tareas_actuales': ['Meta1'],
+        'tareas_actuales': ['Meta 1'],
         'tareas_realizadas': []
     }
     mongo.db.usuarios.insert_one(usuario_a_guardar)
