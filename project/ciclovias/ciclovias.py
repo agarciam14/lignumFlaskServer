@@ -47,7 +47,7 @@ def retirar_info_ciclovias(ciclovias):
             },
             'dia': '',
         }
-        ciclovia : ciclo
+        ciclovia = ciclo
         print(ciclovia)
         ciclovias_a_retornar.append(ciclovia)
     return ciclovias_a_retornar
