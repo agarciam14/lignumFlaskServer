@@ -13,12 +13,8 @@ def traer_ciclovias():
         mensaje = {"tipo": "", "mensaje": ""}
 
         ciclovias = list(mongo.db.ciclovias.find({}))
-
-        ciclovias_a_retornar = retirar_info_ciclovias(ciclovias)
-        
         mensaje["tipo"] = 'aprobado'
-        mensaje["mensaje"] = ciclovias_a_retornar
-        print(mensaje["mensaje"])
+        mensaje["mensaje"] = ciclovias
 
         return jsonify(mensaje)
     except Exception as exception:
@@ -28,7 +24,6 @@ def traer_ciclovias():
         mensaje["mensaje"] = "Error en la conexion con la base de datos"
         return jsonify(mensaje)
 
-def retirar_info_ciclovias(ciclovias):
     ciclovias_a_retornar = []
     for ciclo in ciclovias:
         ciclovia = {

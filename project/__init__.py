@@ -23,6 +23,7 @@ from project.registro_usuario.registro_usuario import registro_usuario_app
 from project.consulta_ApiRutas.consulta_ApiRutas import consulta_ApiRutas_app 
 from project.usuario_general.usuario_general import usuario_general_app
 from project.ciclovias.ciclovias import ciclovias_app
+from project.ranking.ranking import ranking_app
 
 # Instancias del Blueprint
 app.register_blueprint(geolocalizador_app)
@@ -33,6 +34,7 @@ app.register_blueprint(registro_usuario_app)
 app.register_blueprint(consulta_ApiRutas_app)
 app.register_blueprint(usuario_general_app)
 app.register_blueprint(ciclovias_app)
+app.register_blueprint(ranking_app)
 
 @app.route('/api')
 def index():
