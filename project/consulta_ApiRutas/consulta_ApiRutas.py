@@ -2,6 +2,7 @@ from flask import jsonify
 from flask import request
 from flask import Blueprint
 import json
+import requests
 import urllib.request as urllib
 
 consulta_ApiRutas_app = Blueprint("consulta_ApiRutas_app", __name__)
@@ -10,9 +11,8 @@ consulta_ApiRutas_app = Blueprint("consulta_ApiRutas_app", __name__)
 def obtener_ruta():
     mensaje = {"tipo": "", "mensaje": ""}
     try:
-        file_geo = urllib.urlopen("https://www.medellin.gov.co/mapas/rest/services/ServiciosPlaneacion/POT48_Sistema_colectivo/MapServer/14/query?where=1%3D1&outFields=*&outSR=4326&f=json")
-        content = file_geo.read()
-        json_file = json.loads(content)
+        r = requests.get("https://www.medellin.gov.co/mapas/rest/services/ServiciosPlaneacion/POT48_Sistema_colectivo/MapServer/14/query?where=1%3D1&outFields=*&outSR=4326&f=json")
+        json_file = r.json()
         rutas_a_retornar = {"mensaje" : definicion_rutas(json_file)}
         return jsonify(rutas_a_retornar)
     except Exception as exception:
