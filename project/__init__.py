@@ -24,6 +24,7 @@ from project.consulta_ApiRutas.consulta_ApiRutas import consulta_ApiRutas_app
 from project.usuario_general.usuario_general import usuario_general_app
 from project.ciclovias.ciclovias import ciclovias_app
 from project.ranking.ranking import ranking_app
+from project.arboles.arboles import arboles_app
 
 # Instancias del Blueprint
 app.register_blueprint(geolocalizador_app)
@@ -32,6 +33,7 @@ app.register_blueprint(utilidades_administrador_app)
 app.register_blueprint(login_app)
 app.register_blueprint(registro_usuario_app)
 app.register_blueprint(consulta_ApiRutas_app)
+app.register_blueprint(arboles_app)
 app.register_blueprint(usuario_general_app)
 app.register_blueprint(ciclovias_app)
 app.register_blueprint(ranking_app)
