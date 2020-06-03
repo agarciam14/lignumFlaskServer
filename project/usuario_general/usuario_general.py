@@ -46,21 +46,16 @@ def retirar_datos_usuario(datos_usuario):
     tareas= []
     for tarea in usuario['tareas_actuales']:
         tarea = list(mongo.db.metas.find({'nombre_meta': tarea}))[0]
-        tarea = retirar_info_tarea(tarea)
-        tareas.append(tarea)
-
-    usuario['tareas_actuales'] = tareas
-
-    return usuario
-
-def retirar_info_tarea(tarea):
-    tarea = {
+        tarea_a_retornar = {
         'nombre_meta': tarea['nombre_meta'],
         'descripcion': tarea['descripcion'],
         'puntaje': tarea['puntaje']
     }
+        tareas.append(tarea_a_retornar)
 
-    return tarea
+    usuario['tareas_actuales'] = tareas
+
+    return usuario
 
 @usuario_general_app.route('/api/usuario_general/modificar_recorrido', methods=['POST'])
 def modificar_recorrido():
@@ -118,16 +113,14 @@ def evaluar_metas():
             mensaje["tipo"] = "aprobado"
             puntaje = usuario['puntaje']
             for tarea in tareas_actuales:
-                tarea = list(mongo.db.metas.find({'nombre_meta': tarea}))[0]
+                tarea = list(mongo.db.metas.find({'nombre_meta': tarea['nombre_meta']}))[0]
                 if tarea['objetivo']<=usuario['recorrido']:
                     mensaje["tipo"] = "exito"
                     mensaje["mensaje"]+=tarea['nombre_meta']+': '+str(tarea['puntaje'])
                     tareas_realizadas.append(tarea['nombre_meta'])
                     puntaje+=tarea['puntaje']
             
-            print('pre')
             tareas_nuevas = asignar_metas_siguientes(tareas_realizadas)
-            print('pos')
 
             mongo.db.usuarios.update({'_id': usuario['documento']}, {'$set': {'tareas_realizadas': tareas_realizadas, 'tareas_actuales': tareas_nuevas, 'puntos': puntaje}})
 
