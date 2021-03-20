@@ -7,7 +7,7 @@ Flask-PyMongo==2.3.0
 googlemaps==4.2.0
 idna==2.9
 itsdangerous==1.1.0
-Jinja2==2.11.1
+Jinja2==2.11.3
 MarkupSafe==1.1.1
 md5hash==0.0.1
 pkg-resources==0.0.0
